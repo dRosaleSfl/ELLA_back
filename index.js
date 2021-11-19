@@ -16,10 +16,10 @@ conexion.once('error',(err)=>{
     console.log(' no chido', err.message)
 })
 ///-------------------------------------------------------------modelos--------------------------------
-const Analisis= mongoose.model('analisis',{_idpaciente:String,_idlaboratorio:String,estudio:{}},'analisis')
+const Analisis= mongoose.model('analisis',{_idpaciente:String,_idlaboratorio:String,estudio:[]},'analisis')
 const Antecedentes= mongoose.model('antecedentes',{_idpaciente:String,afecciones:{fechainicio:Date},medicamentos:[],habitos:[],antecedentes:{},relaciones:{ultimafecha:Date},embarazo:{aliviofecha:Date},aborto:{abortofecha:Date}},'antecedentes')
 const Anticonceptivos= mongoose.model('anticonceptivo',{_idpaciente:String,metodo:String,fechainicio:Date,efectividad:Number,efectosec:[]},'anticonceptivo')
-const Ciclo= mongoose.model('ciclo',{_idpaciente:String,cicloa:{},cicloh:{},variacion:Number,duracion:Number},'ciclo')
+const Ciclo= mongoose.model('ciclo',{_idpaciente:String,cicloa:[],cicloh:{},variacion:Number,duracion:Number},'ciclo')
 const Consultas= mongoose.model('consultas',{_idpaciente:String,consulta:{},consultah:{}},'consultas')
 const Expediente= mongoose.model('expediente',{_idpaciente:String,alergias:{},tiposangre:String,Altura:Number,peso:Number,Genero:String,_iddoctor:String},'expediente')
 const Laboratorios= mongoose.model('laboratorios',{nombre:String,contacto:{},horario:String,domicilio:{tipo:Number,calle:String,numero:Number,colonia:String,cp:Number,municipio:String,estado:String,pais:String}},'laboratorios')
