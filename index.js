@@ -15,19 +15,238 @@ conexion.once('open',()=>{
 conexion.once('error',(err)=>{
     console.log(' no chido', err.message)
 })
-///-------------------------------------------------------------modelos--------------------------------
-const Analisis= mongoose.model('analisis',{_idpaciente:String,_idlaboratorio:String,estudio:[]},'analisis')
-const Antecedentes= mongoose.model('antecedentes',{_idpaciente:String,afecciones:{fechainicio:Date},medicamentos:[],habitos:[],antecedentes:{},relaciones:{ultimafecha:Date},embarazo:{aliviofecha:Date},aborto:{abortofecha:Date}},'antecedentes')
-const Anticonceptivos= mongoose.model('anticonceptivo',{_idpaciente:String,metodo:String,fechainicio:Date,efectividad:Number,efectosec:[]},'anticonceptivo')
-const Ciclo= mongoose.model('ciclo',{_idpaciente:String,cicloa:[],cicloh:{},variacion:Number,duracion:Number},'ciclo')
-const Consultas= mongoose.model('consultas',{_idpaciente:String,consulta:{},consultah:{}},'consultas')
-const Expediente= mongoose.model('expediente',{_idpaciente:String,alergias:{},tiposangre:String,Altura:Number,peso:Number,Genero:String,_iddoctor:String},'expediente')
-const Laboratorios= mongoose.model('laboratorios',{nombre:String,contacto:{},horario:String,domicilio:{tipo:Number,calle:String,numero:Number,colonia:String,cp:Number,municipio:String,estado:String,pais:String}},'laboratorios')
-const Medicamentos= mongoose.model('medicamentos',{_idpaciente:String,nombre:String,dosis:{},fechainicio:Date,fechafin:Date,efectos:[],notas:[]},'medicamentos')
-const Quiste= mongoose.model('quiste',{lugar:String,datos:{},cancer:String, removido:String,_idpaciente:String},'quiste')
-const Sintomas= mongoose.model('sintomas',{_idpaciente:String,sintoma:String,frecuencia:String,duracion:String,intensidad:String},'sintomas')
-const Usuario= mongoose.model('usuario',{nombre:String,apepat:String,apemat:String,edad:Number,usuario:String,pass:String,domicilio:{tipo:Number,calle:String,numero:Number,colonia:String,cp:Number,municipio:String,estado:String,pais:String},contacto:{}},'usuario')
-///------------------------------------------------------------ find's--------------------------------
+///-------------------------------------------------------------Esquemas-------------------------------
+const UsuarioEsquem = new mongoose.Schema({
+    nombre:String,
+    apepat:String,
+    apemat:String,
+    edad:Number,
+    usuario:String,
+    pass:String,
+    domicilio:{
+        tipo:Number,
+        calle:String,
+        numero:Number,
+        colonia:String,
+        cp:Number,
+        municipio:String,
+        estado:String,
+        pais:String
+    },
+    contacto:{
+        tel:Number,
+        casa:Number
+    },
+    tipo:Number
+})
+const AnticonceptivosEsquema = mongoose.Schema({
+    metodo:String,
+    fechainicio:Date,
+    efectividad:Number,
+    efectos:{},
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    }
+})
+const LaboratoriosEsquema = mongoose.Schema({
+    nombre:String,
+    contacto:{
+        tel:Number
+    },
+    horario:String,
+    domicilio:{
+        tipo:Number,
+        calle:String,
+        numero:Number,
+        colonia:String,
+        cp:Number,
+        municipio:String,
+        estado:String,
+        pais:String
+    }
+
+})
+const AnalisisEsquema = mongoose.Schema({
+    estudio:[
+        {
+            fechaToma:Date,
+            nombrestudio:String,
+            resultado:Number,
+            variacion:Number
+        }
+    ],
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    },
+    _idlaboratorio:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"laboratorios"
+    }
+})
+ AntecedentesEsquema = mongoose.Schema({
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    },
+    afecciones:[
+        {
+        fechainicio:Date,
+        tipo:String
+       }
+    ],
+    medicamentos:[],
+    habitos:[],
+    antecedentes:[
+        {
+        parentezco:String,
+        enfermedad:String,
+        edad:Number
+        }
+    ],
+    relaciones:{
+        ultimafecha:Date,
+        nparejas:Number,
+        frecuencia:String
+    },
+    embarazo:[
+        {
+        aliviofecha:Date,
+        sexo:String,
+        complicaciones:[]
+       }
+    ],
+    aborto:[
+        {
+        abortofecha:Date,
+        causa:String
+        }
+   ]
+ }) 
+CicloEsquema = mongoose.Schema({
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    },
+    cicloa:{
+        fechainicio:Date,
+        fechafin:Date,
+        duracioni:Number
+        },
+    cicloh:[
+        {
+            
+        }
+    ],
+    variacion:Number,
+    duracion:Number
+})
+ConsultasEsquema = mongoose.Schema({
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    },
+    consulta:{
+        fecha:Date,
+        hora:String,
+        peso:Number
+    },
+    consultah:[
+        {
+
+        }
+    ]
+})
+ExpedienteEsquema = mongoose.Schema({
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    },
+    alergias:[
+        {
+            sintomas:[],
+            causa:String,
+            complicacion:String
+        }
+    ],
+    tiposangre:String,
+    Altura:Number,
+    peso:Number,
+    Genero:String,
+    _iddoctor:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    }
+})
+MedicamentosEsquema = mongoose.Schema({
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    },
+    nombre:String,
+    dosis:{
+        cantidad:Number,
+        frecuencia:String
+    },
+    fechainicio:Date,
+    fechafin:Date,
+    efectos:[],
+    notas:[]
+})
+QuisteEsquema = mongoose.Schema({
+    lugar:String,
+    datos:[
+      {
+        tamaño:Number,
+        fecha:Date
+      }
+   ],
+    cancer:String,
+    removido:String,
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    }
+})
+SintomasEsquema = mongoose.Schema({
+    _idpaciente:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"usuario"
+    },
+    sintoma:String,
+    frecuencia:String,
+    duracion:String,
+    intensidad:String
+})
+///-------------------------------------------------------------Modelos--------------------------------
+const Analisis= mongoose.model('analisis',AnalisisEsquema,'analisis')
+const Antecedentes= mongoose.model('antecedentes',AntecedentesEsquema,'antecedentes')
+const Anticonceptivos= mongoose.model('anticonceptivo',AnticonceptivosEsquema,'anticonceptivo')
+const Ciclo= mongoose.model('ciclo',CicloEsquema,'ciclo')
+const Consultas= mongoose.model('consultas',ConsultasEsquema,'consultas')
+const Expediente= mongoose.model('expediente',ExpedienteEsquema,'expediente')
+const Laboratorios= mongoose.model('laboratorios',LaboratoriosEsquema,'laboratorios')
+const Medicamentos= mongoose.model('medicamentos',MedicamentosEsquema,'medicamentos')
+const Quiste= mongoose.model('quiste',QuisteEsquema,'quiste')
+const Sintomas= mongoose.model('sintomas',SintomasEsquema,'sintomas')
+const Usuario= mongoose.model('usuario',UsuarioEsquem,'usuario')
+///-------------------------------------------------------------Joins---------------------------------
+/*Anticonceptivos.find( { _idpaciente: "619c0456e554c19259f928e7" })
+.populate("_idpaciente")
+.then(p=>console.log(p))
+.catch(error=>console.log(error))
+
+Analisis.find()
+.populate("_idpaciente").populate("_idlaboratorio")
+.then(p=>console.log(p))
+.catch(error=>console.log(error))
+
+Antecedentes.find()
+.populate("_idpaciente")
+.then(p=>console.log(p))
+.catch(error=>console.log(error))*/
+///------------------------------------------------------------ Find's--------------------------------
 //----usuario
 app.get('/find',(req,res)=>{
     Usuario.find({},{_id:0})
@@ -38,6 +257,7 @@ app.get('/find',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
+
 //----expediente
 app.get('/findEX',(req,res)=>{
     Expediente.find({},{_id:0})
@@ -141,7 +361,7 @@ app.get('/findLAB',(req,res)=>{
 //---------------------------------------------------------- INSERT'S------------------------------------
 //----usuario
 app.post('/insert',(req,res)=>{
-    const user= new Usuario({nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais},contacto:{tel:Number(req.body.tel),casa:Number(req.body.casa)}})
+    const user= new Usuario({nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais},contacto:{tel:req.body.tel,casa:req.body.casa}})
     user.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -153,7 +373,7 @@ app.post('/insert',(req,res)=>{
 })
 //----analisis
 app.post('/insertAN',(req,res)=>{
-    const analis= new Analisis({_idpaciente:req.body._idpaciente,_idlaboratorio:req.body._idlaboratorio,estudio:{fechaToma:Date(req.body.fechaToma),nombrestudio:req.body.estudio,resultado:Number(req.body.resultado),variacion:req.body.variacion}})
+    const analis= new Analisis({_idpaciente:req.body._idpaciente,_idlaboratorio:req.body._idlaboratorio,estudio:{fechaToma:req.body.fechaToma,nombrestudio:req.body.nombrestudio,resultado:req.body.resultado,variacion:req.body.variacion}})
     analis.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -165,7 +385,7 @@ app.post('/insertAN',(req,res)=>{
 })
 //----antecedente medicos
 app.post('/insertAM',(req,res)=>{
-    const ante= new Antecedentes({_idpaciente:req.body._idpaciente,afecciones:{tipo:req.body.tipo,fechainicio:req.body.fechainicio},medicamentos:[req.body.medicamentos],habitos:[req.body.medicamentos],antecedentes:{parentezco:req.body.parentezco,enfermedad:req.body.enfermedad,edad:Number(req.body.edad)},relaciones:{ultimafecha:req.body.fecha,nparejas:Number(req.body.parejas),frecuencia:req.body.frecuencia},embarazo:{aliviofecha:req.body.fechalivio,sexo:req.body.sexo,complicaciones:req.body.complicaciones},aborto:{abortofecha:req.body.fechaborto,causa:req.body.causa}})
+    const ante= new Antecedentes({_idpaciente:req.body._idpaciente,afecciones:{tipo:req.body.tipo,fechainicio:req.body.fechainicio},medicamentos:[req.body.medicamentos],habitos:[req.body.habitos],antecedentes:{parentezco:req.body.parentezco,enfermedad:req.body.enfermedad,edad:req.body.edad},relaciones:{ultimafecha:req.body.ultimafecha,nparejas:req.body.nparejas,frecuencia:req.body.frecuencia},embarazo:{aliviofecha:req.body.aliviofecha,sexo:req.body.sexo,complicaciones:[req.body.complicaciones]},aborto:{abortofecha:req.body.abortofecha,causa:req.body.causa}})
     ante.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -177,7 +397,8 @@ app.post('/insertAM',(req,res)=>{
 })
 //----Metodos Anticonceptivos
 app.post('/insertMA',(req,res)=>{
-    const metodo= new Anticonceptivos ({_idpaciente:req.body._idpaciente,metodo:req.body.metodo,fechainicio:req.body.fechainicio,efectividad:Number(req.body.efectividad),efectosec:[req.body.efectosec]})
+    efectos=["vomito","nauseas"]
+    const metodo= new Anticonceptivos ({_idpaciente:req.body._idpaciente,metodo:req.body.metodo,fechainicio:req.body.fechainicio,efectividad:req.body.efectividad,efectos:efectos})
     metodo.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -189,7 +410,7 @@ app.post('/insertMA',(req,res)=>{
 })
 //---- Ciclo
 app.post('/insertCM',(req,res)=>{
-    const regla= new Ciclo ({_idpaciente:req.body._idpaciente,cicloa:{fechainicio:req.body.fechainicio,fechafin:req.body.fechafin,duracion:req.body.duracion},cicloh:{fechainicio:req.body.fechainicioh,fechafin:req.body.fechafinh,duracion:req.body.duracionh},variacion:req.body.variacion,duracion:req.body.variacion})
+    const regla= new Ciclo ({_idpaciente:req.body._idpaciente,cicloa:[{fechainicio:req.body.fechainicio,fechafin:req.body.fechafin}]})
     regla.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -201,7 +422,7 @@ app.post('/insertCM',(req,res)=>{
 })
 //----Consultas
 app.post('/insertCO',(req,res)=>{
-    const consulta= new Consultas({_idpaciente:req.body._idpaciente,consulta:{fecha:req.body.fecha,hora:req.body.hora,peso:Number(req.body.peso)},consultah:{}})
+    const consulta= new Consultas({_idpaciente:req.body._idpaciente,consulta:{fecha:req.body.fecha,hora:req.body.hora,peso:req.body.peso},})
     consulta.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -213,8 +434,8 @@ app.post('/insertCO',(req,res)=>{
 })
 //----Expediente
 app.post('/insertEX',(req,res)=>{
-    var sint = ["mareo", "haqueca", "vomito"]
-    const exp = new Expediente({_idpaciente:req.body._idpaciente,alergias:[ { sintomas: [req.body.sintomas, "dolor", "muerte" ], causa:req.body.causa,complicacion:req.body.complicacion } ],tiposangre:req.body.tiposangre,Altura:Number(req.body.altura),peso:Number(req.body.peso),Genero:req.body.genero,_iddoctor:req.body._iddoctor})
+    
+    const exp = new Expediente({_idpaciente:req.body._idpaciente,alergias:[ { sintomas: [req.body.sintomas, "dolor", "muerte" ], causa:req.body.causa,complicacion:req.body.complicacion } ],tiposangre:req.body.tiposangre,Altura:req.body.Altura,peso:req.body.peso,Genero:req.body.Genero,_iddoctor:req.body._iddoctor})
     exp.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -226,8 +447,8 @@ app.post('/insertEX',(req,res)=>{
 })
 //----Laboratorios
 app.post('/insertLAB',(req,res)=>{
-    console.log("body: " + req.body)
-    const lab= new Laboratorios({nombre:req.body.nombre,contacto:{tel:Number(req.body.tel)},horario:req.body.horario,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais}})
+    console.log("holi")
+    const lab= new Laboratorios({nombre:req.body.nombre,contacto:{tel:req.body.tel},horario:req.body.horario,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais}})
     lab.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -239,10 +460,10 @@ app.post('/insertLAB',(req,res)=>{
 })
 //----Medicamentos
 app.post('/insertME',(req,res)=>{
-    const medi= new Medicamentos({_idpaciente:req.body._idpaciente,nombre:req.body.nombre,dosis:{cantidad:req.body.cantidad,frecuencia:req.body.frecuencia},fechainicio:Date(req.body.fechainicio),fechafin:Date(req.body.fechafin),efectos:[req.body.efectos],notas:[req.body.notas]})
+    const medi= new Medicamentos({_idpaciente:req.body._idpaciente,nombre:req.body.nombre,dosis:{cantidad:req.body.cantidad,frecuencia:req.body.frecuencia},fechainicio:req.body.fechainicio,fechafin:req.body.fechafin,efectos:[req.body.efectos],notas:[req.body.notas]})
     medi.save()
     .then(doc=>{
-        console.log("Info: "+req.body)
+        //console.log("Info: "+req.body)
         console.log('infor insertada')
         res.json({response:'succes',data:doc})
     })
