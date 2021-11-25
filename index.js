@@ -836,6 +836,16 @@ app.get('/findLAB',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
+//----laboratorios
+app.get('/findLAB/uno/:id',(req,res)=>{
+    Laboratorios.find({_id:req.params.id},{_id:0})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
 //----Laboratorios
 app.post('/insertLAB',(req,res)=>{
     const lab= new Laboratorios({nombre:req.body.nombre,contacto:{tel:req.body.tel},horario:req.body.horario,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais}})
