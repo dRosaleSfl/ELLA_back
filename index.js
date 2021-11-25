@@ -42,7 +42,9 @@ const AnticonceptivosEsquema = mongoose.Schema({
     metodo:String,
     fechainicio:Date,
     efectividad:Number,
-    efectos:{},
+    efectos:[
+
+    ],
     _idpaciente:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"usuario"
@@ -84,7 +86,7 @@ const AnalisisEsquema = mongoose.Schema({
         ref:"laboratorios"
     }
 })
- AntecedentesEsquema = mongoose.Schema({
+ const AntecedentesEsquema = mongoose.Schema({
     _idpaciente:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"usuario"
@@ -123,7 +125,7 @@ const AnalisisEsquema = mongoose.Schema({
         }
    ]
  }) 
-CicloEsquema = mongoose.Schema({
+ const CicloEsquema = mongoose.Schema({
     _idpaciente:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"usuario"
@@ -141,7 +143,7 @@ CicloEsquema = mongoose.Schema({
     variacion:Number,
     duracion:Number
 })
-ConsultasEsquema = mongoose.Schema({
+ const ConsultasEsquema = mongoose.Schema({
     _idpaciente:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"usuario"
@@ -157,7 +159,7 @@ ConsultasEsquema = mongoose.Schema({
         }
     ]
 })
-ExpedienteEsquema = mongoose.Schema({
+ const ExpedienteEsquema = mongoose.Schema({
     _idpaciente:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"usuario"
@@ -178,7 +180,7 @@ ExpedienteEsquema = mongoose.Schema({
         ref:"usuario"
     }
 })
-MedicamentosEsquema = mongoose.Schema({
+ const MedicamentosEsquema = mongoose.Schema({
     _idpaciente:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"usuario"
@@ -193,7 +195,7 @@ MedicamentosEsquema = mongoose.Schema({
     efectos:[],
     notas:[]
 })
-QuisteEsquema = mongoose.Schema({
+ const QuisteEsquema = mongoose.Schema({
     lugar:String,
     datos:[
       {
@@ -208,7 +210,7 @@ QuisteEsquema = mongoose.Schema({
         ref:"usuario"
     }
 })
-SintomasEsquema = mongoose.Schema({
+ const SintomasEsquema = mongoose.Schema({
     _idpaciente:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"usuario"
@@ -276,26 +278,26 @@ app.get('/delete/:_idpaciente',(req,res)=>{
          res.json({response:'succes eliminado',data:doc})
      })
      .catch(err=>{
-         console.log(' error en la consulta', err.message)
+         console.log(' error en la consulta U', err.message)
      })
     //------- borra los analisis del usuario
-    Analisis.deleteOne({_idpaciente:id})
+    Analisis.deleteMany({_idpaciente:id})
     .then(doc=>{
-        res.json({response:'succes eliminado',data:doc})
+        res.json({response:'succes eliminado de analisis'})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
     })
     //------ borrar los antecedentes
-    Antecedentes.deleteOne({_idpaciente:id})
+    Antecedentes.deleteMany({_idpaciente:id})
     .then(doc=>{
-        res.json({response:'succes eliminado',data:doc})
+        res.json({response:'succes eliminado de antecedentes'})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
     })
     //------- borra los anticonceptivos
-    Anticonceptivos.deleteOne({_idpaciente:id})
+    Anticonceptivos.deleteMany({_idpaciente:id})
     .then(doc=>{
         res.json({response:'succes eliminado',data:doc})
     })
@@ -303,7 +305,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
     ///----------- borra los ciclos
-    Ciclo.deleteOne({_idpaciente:id})
+    Ciclo.deleteMany({_idpaciente:id})
     .then(doc=>{
         res.json({response:'succes eliminado',data:doc})
     })
@@ -311,7 +313,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
     ///----------- borra las consultas
-    Consultas.deleteOne({_idpaciente:id})
+    Consultas.deleteMany({_idpaciente:id})
     .then(doc=>{
         res.json({response:'succes eliminado',data:doc})
     })
@@ -319,7 +321,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
     ///----------- borra el expediente
-    Expediente.deleteOne({_idpaciente:id})
+    Expediente.deleteMany({_idpaciente:id})
     .then(doc=>{
         res.json({response:'succes eliminado',data:doc})
     })
@@ -327,7 +329,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
     ///----------- elimina los quistes
-    Quiste.deleteOne({_idpaciente:id})
+    Quiste.deleteMany({_idpaciente:id})
     .then(doc=>{
         res.json({response:'succes eliminado',data:doc})
     })
@@ -335,7 +337,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
     ///----------- borra los sintomas
-    Sintomas.deleteOne({_idpaciente:id})
+    Sintomas.deleteMany({_idpaciente:id})
     .then(doc=>{
         res.json({response:'succes eliminado',data:doc})
     })
@@ -343,7 +345,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
     ///----------- borra los medicamentos
-    Medicamentos.deleteOne({_idpaciente:id})
+    Medicamentos.deleteMany({_idpaciente:id})
     .then(doc=>{
         res.json({response:'succes eliminado',data:doc})
     })
@@ -351,6 +353,18 @@ app.get('/delete/:_idpaciente',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
  })
+ //----usuario meter nuevos usuarios
+app.post('/insert',(req,res)=>{
+    const user= new Usuario({nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais},contacto:[req.body.contacto],tipo:req.body.tipo})
+    user.save()
+    .then(doc=>{
+        console.log('infor insertada',)
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
 //---- usuario actualizar (no documentos ni arrays)
 app.put('/update/:_idpaciente',(req,res)=>{
     var id = req.params._idpaciente
@@ -374,10 +388,15 @@ app.put('/update/domicilio/:_idpaciente',(req,res)=>{
        console.log(' error en la consulta', err.message)
    })
 })
+//------ Mete otro numero de telefeno
+//------- edita la direccion
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//-------------------------------------------------------EXpediente
 //----expediente
-app.get('/findEX',(req,res)=>{
-    Expediente.find({},{_id:0})
+app.get('/findEX/:_id',(req,res)=>{
+    Expediente.find({_id:req.params._id},{_id:0})
     .then(doc=>{
         res.json({response:'succes',data:doc})
     })
@@ -385,9 +404,9 @@ app.get('/findEX',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
-//----consultas
-app.get('/findCO',(req,res)=>{
-    Consultas.find({},{_id:0})
+//--- busqueda por paciente
+app.get('/findEX/uno/:_idpaciente',(req,res)=>{
+    Expediente.find({_idpaciente:req.params._idpaciente},{_id:0})
     .then(doc=>{
         res.json({response:'succes',data:doc})
     })
@@ -395,91 +414,31 @@ app.get('/findCO',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
-//----medicamentos
-app.get('/findME',(req,res)=>{
-    Medicamentos.find({},{_id:0})
+//----- busqueda por doctor 
+app.get('/findEX/dos/:_iddoctor',(req,res)=>{
+   /* Expediente.find({_iddoctor:req.params._iddoctor},{_id:0})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })*/
+    Expediente.find({_iddoctor: req.params._iddoctor})
+    .populate("_iddoctor").populate("_idpaciente")
     .then(doc=>{
         res.json({response:'succes',data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
     })
+   // .then(p=>console.log(p))
+    //.catch(error=>console.log(error))
 })
-//----sintomas
-app.get('/findSI',(req,res)=>{
-    Sintomas.find({},{_id:0})
-    .then(doc=>{
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----ciclomenstrual
-app.get('/findCM',(req,res)=>{
-    Ciclo.find({},{_id:0})
-    .then(doc=>{
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----quiste
-app.get('/findQ',(req,res)=>{
-    Quiste.find({},{_id:0})
-    .then(doc=>{
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----analisangre
-app.get('/findAN',(req,res)=>{
-    Analisis.find({},{_id:0})
-    .then(doc=>{
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----metodoanti
-app.get('/findMA',(req,res)=>{
-    Anticonceptivos.find({},{_id:0})
-    .then(doc=>{
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----antecedentes
-app.get('/findAM',(req,res)=>{
-    Antecedentes.find({},{_id:0})
-    .then(doc=>{
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----laboratorios
-app.get('/findLAB',(req,res)=>{
-    Laboratorios.find({},{_id:0})
-    .then(doc=>{
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//---------------------------------------------------------- INSERT'S------------------------------------
-//----usuario
-app.post('/insert',(req,res)=>{
-    const user= new Usuario({nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais},contacto:[req.body.contacto]})
-    user.save()
+//---- nuevo expediente
+//----Expediente
+app.post('/insertEX',(req,res)=>{
+    const exp = new Expediente({_idpaciente:req.body._idpaciente,alergias:[ { sintomas: [req.body.sintomas, "dolor", "muerte" ], causa:req.body.causa,complicacion:req.body.complicacion } ],tiposangre:req.body.tiposangre,Altura:req.body.Altura,peso:req.body.peso,Genero:req.body.Genero,_iddoctor:req.body._iddoctor})
+    exp.save()
     .then(doc=>{
         console.log('infor insertada',)
         res.json({response:'succes',data:doc})
@@ -488,56 +447,86 @@ app.post('/insert',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
-//----analisis
-app.post('/insertAN',(req,res)=>{
-    const analis= new Analisis({_idpaciente:req.body._idpaciente,_idlaboratorio:req.body._idlaboratorio,estudio:{fechaToma:req.body.fechaToma,nombrestudio:req.body.nombrestudio,resultado:req.body.resultado,variacion:req.body.variacion}})
-    analis.save()
-    .then(doc=>{
-        console.log('infor insertada',)
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----antecedente medicos
-app.post('/insertAM',(req,res)=>{
-    const ante= new Antecedentes({_idpaciente:req.body._idpaciente,afecciones:{tipo:req.body.tipo,fechainicio:req.body.fechainicio},medicamentos:[req.body.medicamentos],habitos:[req.body.habitos],antecedentes:{parentezco:req.body.parentezco,enfermedad:req.body.enfermedad,edad:req.body.edad},relaciones:{ultimafecha:req.body.ultimafecha,nparejas:req.body.nparejas,frecuencia:req.body.frecuencia},embarazo:{aliviofecha:req.body.aliviofecha,sexo:req.body.sexo,complicaciones:[req.body.complicaciones]},aborto:{abortofecha:req.body.abortofecha,causa:req.body.causa}})
-    ante.save()
-    .then(doc=>{
-        console.log('infor insertada',)
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----Metodos Anticonceptivos
+//---- borrar el expediente
+app.get('/deleteEX/:id',(req,res)=>{
+    const id= req.params.id
+    Expediente.findByIdAndDelete({_id:id})
+     .then(doc=>{
+         res.json({response:'succes eliminado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+ })
+ //---- actualizar un expediente
+ app.put('/updateEX/:id',(req,res)=>{
+    const id= req.params.id
+    let update = req.body
+    Expediente.findByIdAndUpdate(id,update)
+     .then(doc=>{
+         res.json({response:'succes Actualizado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+ })
+//-------mostrar pacientes segun el doctor
+/*
+   {_iddoctor: "6194874ee92a61d2a8fea18e"}
+*/
 
-app.post('/insertMA',(req,res)=>{
-        const metodo= new Anticonceptivos ({_idpaciente:req.body._idpaciente,metodo:req.body.metodo,fechainicio:req.body.fechainicio,efectividad:req.body.efectividad,efectos:efectos})
-    metodo.save()
+
+
+/*Analisis.find()
+.populate("_idpaciente").populate("_idlaboratorio")
+.then(p=>console.log(p))
+.catch(error=>console.log(error))*/
+
+/*
+app.get('/joinEX/:id',(req,res)=>{
+    const id= req.params.id
+    Expediente.find({_iddoctor:id})
+    .populate("_idpaciente").populate("_iddoctor")
+    .then(p=>console.log(p))
+    .catch(error=>console.log(error))
+
+    Expediente.findByIdAndDelete({_id:id})
+     .then(doc=>{
+         res.json({response:'succes eliminado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+ })*/
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------ Consultas
+//----consultas
+app.get('/findCO/uno/:_idpaciente',(req,res)=>{
+    Consultas.find({_idpaciente:req.params._idpaciente},{_id:0})
     .then(doc=>{
-        console.log('infor insertada',)
         res.json({response:'succes',data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
     })
 })
-//---- Ciclo
-app.post('/insertCM',(req,res)=>{
-    const regla= new Ciclo ({_idpaciente:req.body._idpaciente,cicloa:[{fechainicio:req.body.fechainicio,fechafin:req.body.fechafin}]})
-    regla.save()
-    .then(doc=>{
-        console.log('infor insertada',)
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----Consultas
+//----Consultas eliminar
+app.get('/deleteCO/:id',(req,res)=>{
+    const id= req.params.id
+    Consultas.findByIdAndDelete({_id:id})
+     .then(doc=>{
+         res.json({response:'succes eliminado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+ })
+//----Consultas nueva
 app.post('/insertCO',(req,res)=>{
     const consulta= new Consultas({_idpaciente:req.body._idpaciente,consulta:{fecha:req.body.fecha,hora:req.body.hora,peso:req.body.peso},})
     consulta.save()
@@ -549,33 +538,25 @@ app.post('/insertCO',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
-//----Expediente
-app.post('/insertEX',(req,res)=>{
-    
-    const exp = new Expediente({_idpaciente:req.body._idpaciente,alergias:[ { sintomas: [req.body.sintomas, "dolor", "muerte" ], causa:req.body.causa,complicacion:req.body.complicacion } ],tiposangre:req.body.tiposangre,Altura:req.body.Altura,peso:req.body.peso,Genero:req.body.Genero,_iddoctor:req.body._iddoctor})
-    exp.save()
+//------------ mandar una consulta al historial
+//------------- meter una nueva consulta al array
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------ Medicamentos
+//----medicamentos
+app.get('/findME/uno/:_idpaciente',(req,res)=>{
+    Medicamentos.find({_idpaciente:req.params._idpaciente},{_id:0})
     .then(doc=>{
-        console.log('infor insertada',)
         res.json({response:'succes',data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
     })
 })
-//----Laboratorios
-app.post('/insertLAB',(req,res)=>{
-    console.log("holi")
-    const lab= new Laboratorios({nombre:req.body.nombre,contacto:{tel:req.body.tel},horario:req.body.horario,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais}})
-    lab.save()
-    .then(doc=>{
-        console.log('infor insertada',)
-        res.json({response:'succes',data:doc})
-    })
-    .catch(err=>{
-        console.log(' error en la consulta', err.message)
-    })
-})
-//----Medicamentos
+//----Medicamentos nuevos
 app.post('/insertME',(req,res)=>{
     const medi= new Medicamentos({_idpaciente:req.body._idpaciente,nombre:req.body.nombre,dosis:{cantidad:req.body.cantidad,frecuencia:req.body.frecuencia},fechainicio:req.body.fechainicio,fechafin:req.body.fechafin,efectos:[req.body.efectos],notas:[req.body.notas]})
     medi.save()
@@ -588,19 +569,33 @@ app.post('/insertME',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
-//----Quiste
-app.post('/insertQ',(req,res)=>{
-    const quiste= new Quiste({lugar:req.body.lugar,datos:{tamaño:req.body.tamaño,fecha:req.body.fecha},cancer:req.body.cancer, removido:req.body.removido,_idpaciente:req.body._idpaciente})
-    quiste.save()
+//----Medicamentos eliminar
+app.get('/deleteME/:id',(req,res)=>{
+    const id= req.params.id
+    Medicamentos.findByIdAndDelete({_id:id})
+     .then(doc=>{
+         res.json({response:'succes eliminado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+ })
+ //---- update dosis
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------ Sintomas
+//----sintomas 
+app.get('/findSI/uno/:_idpaciente',(req,res)=>{
+    Sintomas.find({_idpaciente:req.params._idpaciente},{_id:0})
     .then(doc=>{
-        console.log('infor insertada',)
         res.json({response:'succes',data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
     })
 })
-//----Sintomas
+//----Sintomas nuevos
 app.post('/insertSI',(req,res)=>{
     const sintoma= new Sintomas({_idpaciente:req.body._idpaciente,sintoma:req.body.sintoma,frecuencia:req.body.frecuencia,duracion:req.body.frecuencia,intensidad:req.body.intensidad})
     sintoma.save()
@@ -612,45 +607,51 @@ app.post('/insertSI',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
+//----Sintomas eliminar 
+app.get('/deleteSI/:id',(req,res)=>{
+    const id= req.params.id
+    Sintomas.findByIdAndDelete({_id:id})
+     .then(doc=>{
+         res.json({response:'succes eliminado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+ })
 
-//---------------------------------------------------------- UPDATE'S------------------------------------
-//---------------------------------------------------------- DELET'S------------------------------------
 
- //----Analisis de sangre
- app.get('/deleteAN/:id',(req,res)=>{
-    const id= req.params.id
-    Analisis.findByIdAndDelete({_idpaciente:id})
-     .then(doc=>{
-         res.json({response:'succes eliminado',data:doc})
-     })
-     .catch(err=>{
-         console.log(' error en la consulta', err.message)
-     })
-    
- })
- //----Antecedentes
- app.get('/deleteAM/:id',(req,res)=>{
-    const id= req.params.id
-    Antecedentes.findByIdAndDelete({_id:id})
-     .then(doc=>{
-         res.json({response:'succes eliminado',data:doc})
-     })
-     .catch(err=>{
-         console.log(' error en la consulta', err.message)
-     })
- })
- //----Metodo Anticonceptivo
- app.get('/deleteMA/:id',(req,res)=>{
-    const id= req.params.id
-    Anticonceptivos.findByIdAndDelete({_id:id})
-     .then(doc=>{
-         res.json({response:'succes eliminado',data:doc})
-     })
-     .catch(err=>{
-         console.log(' error en la consulta', err.message)
-     })
- })
- //----Ciclo
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------ Ciclo 
+//----ciclomenstrual
+app.get('/findCM/uno/:_idpaciente',(req,res)=>{
+    Ciclo.find({_idpaciente:req.params._idpaciente},{_id:0})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//---- Ciclo alta
+app.post('/insertCM',(req,res)=>{
+    const regla= new Ciclo ({_idpaciente:req.body._idpaciente,cicloa:[{fechainicio:req.body.fechainicio,fechafin:req.body.fechafin}]})
+    regla.save()
+    .then(doc=>{
+        console.log('infor insertada',)
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//------ pasar el ciclo al historial
+//-------- meter un nuevo ciclo 
+//----- update variacion
+//---- update duracion 
+
+ //----Ciclo eliminar 
  app.get('/deleteCM/:id',(req,res)=>{
     const id= req.params.id
     Ciclo.findByIdAndDelete({_id:id})
@@ -661,10 +662,41 @@ app.post('/insertSI',(req,res)=>{
          console.log(' error en la consulta', err.message)
      })
  })
- //----Consultas
- app.get('/deleteCO/:id',(req,res)=>{
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------ Quiste
+//----quiste
+app.get('/findQ/uno/:_idpaciente',(req,res)=>{
+    Quiste.find({_idpaciente:req.params._idpaciente},{_id:0})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//----Quiste nuevo
+app.post('/insertQ',(req,res)=>{
+    const quiste= new Quiste({lugar:req.body.lugar,datos:{tamaño:req.body.tamaño,fecha:req.body.fecha},cancer:req.body.cancer, removido:req.body.removido,_idpaciente:req.body._idpaciente})
+    quiste.save()
+    .then(doc=>{
+        console.log('infor insertada',)
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//------- editar datos
+//------- update de removido 
+
+ //----Quiste eliminar 
+ app.get('/deleteQ/:id',(req,res)=>{
     const id= req.params.id
-    Consultas.findByIdAndDelete({_id:id})
+    Quiste.findByIdAndDelete({_id:id})
      .then(doc=>{
          res.json({response:'succes eliminado',data:doc})
      })
@@ -672,10 +704,77 @@ app.post('/insertSI',(req,res)=>{
          console.log(' error en la consulta', err.message)
      })
  })
- //----Expediente
- app.get('/deleteEX/:id',(req,res)=>{
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------   Analis de Sangre
+//----analisangre
+app.get('/findAN/uno/:_idpaciente',(req,res)=>{
+    Analisis.find({_idpaciente:req.params._idpaciente},{_id:0})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//----analisis nuevo
+app.post('/insertAN',(req,res)=>{
+    const analis= new Analisis({_idpaciente:req.body._idpaciente,_idlaboratorio:req.body._idlaboratorio,estudio:{fechaToma:req.body.fechaToma,nombrestudio:req.body.nombrestudio,resultado:req.body.resultado,variacion:req.body.variacion}})
+    analis.save()
+    .then(doc=>{
+        console.log('infor insertada',)
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//----Analisis de sangre eliminar 
+app.get('/deleteAN/:id',(req,res)=>{
     const id= req.params.id
-    Expediente.findByIdAndDelete({_id:id})
+    Analisis.findByIdAndDelete({_idpaciente:id})
+     .then(doc=>{
+         res.json({response:'succes eliminado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+    
+ })
+
+
+
+ //////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------ Metodo Anticonceptivo
+//----metodoanti
+app.get('/findMA/uno/:_idpaciente',(req,res)=>{
+    Anticonceptivos.find({_idpaciente:req.params._idpaciente},{_id:0})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//----Metodos Anticonceptivos nuevos
+app.post('/insertMA',(req,res)=>{
+    const metodo= new Anticonceptivos ({_idpaciente:req.body._idpaciente,metodo:req.body.metodo,fechainicio:req.body.fechainicio,efectividad:req.body.efectividad,efectos:req.body.efectos})
+metodo.save()
+.then(doc=>{
+    console.log('infor insertada',)
+    res.json({response:'succes',data:doc})
+})
+.catch(err=>{
+    console.log(' error en la consulta', err.message)
+})
+})
+ //----Metodo Anticonceptivo eliminar
+ app.get('/deleteMA/:id',(req,res)=>{
+    const id= req.params.id
+    Anticonceptivos.findByIdAndDelete({_id:id})
      .then(doc=>{
          res.json({response:'succes eliminado',data:doc})
      })
@@ -683,6 +782,73 @@ app.post('/insertSI',(req,res)=>{
          console.log(' error en la consulta', err.message)
      })
  })
+
+
+ //////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------ Antecendees
+//----antecedentes
+app.get('/findAM/uno/:_idpaciente',(req,res)=>{
+    Antecedentes.find({_idpaciente:req.params_idpaciente},{_id:0})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//----antecedente medicos nuevos
+app.post('/insertAM',(req,res)=>{
+    const ante= new Antecedentes({_idpaciente:req.body._idpaciente,afecciones:{tipo:req.body.tipo,fechainicio:req.body.fechainicio},medicamentos:[req.body.medicamentos],habitos:[req.body.habitos],antecedentes:{parentezco:req.body.parentezco,enfermedad:req.body.enfermedad,edad:req.body.edad},relaciones:{ultimafecha:req.body.ultimafecha,nparejas:req.body.nparejas,frecuencia:req.body.frecuencia},embarazo:{aliviofecha:req.body.aliviofecha,sexo:req.body.sexo,complicaciones:[req.body.complicaciones]},aborto:{abortofecha:req.body.abortofecha,causa:req.body.causa}})
+    ante.save()
+    .then(doc=>{
+        console.log('infor insertada',)
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//----Antecedentes eliminar
+app.get('/deleteAM/:id',(req,res)=>{
+    const id= req.params.id
+    Antecedentes.findByIdAndDelete({_id:id})
+     .then(doc=>{
+         res.json({response:'succes eliminado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+ })
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------ Laboratorios
+//----laboratorios
+app.get('/findLAB',(req,res)=>{
+    Laboratorios.find({},{_id:0})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//----Laboratorios
+app.post('/insertLAB',(req,res)=>{
+    const lab= new Laboratorios({nombre:req.body.nombre,contacto:{tel:req.body.tel},horario:req.body.horario,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais}})
+    lab.save()
+    .then(doc=>{
+        console.log('infor insertada',)
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+ 
  //----Laboratorios
  app.get('/deleteLAB/:id',(req,res)=>{
     const id= req.params.id
@@ -694,39 +860,9 @@ app.post('/insertSI',(req,res)=>{
          console.log(' error en la consulta', err.message)
      })
  })
- //----Medicamentos
- app.get('/deleteME/:id',(req,res)=>{
-    const id= req.params.id
-    Medicamentos.findByIdAndDelete({_id:id})
-     .then(doc=>{
-         res.json({response:'succes eliminado',data:doc})
-     })
-     .catch(err=>{
-         console.log(' error en la consulta', err.message)
-     })
- })
- //----Quiste
- app.get('/deleteQ/:id',(req,res)=>{
-    const id= req.params.id
-    Quiste.findByIdAndDelete({_id:id})
-     .then(doc=>{
-         res.json({response:'succes eliminado',data:doc})
-     })
-     .catch(err=>{
-         console.log(' error en la consulta', err.message)
-     })
- })
- //----Sintomas
- app.get('/deleteSI/:id',(req,res)=>{
-    const id= req.params.id
-    Sintomas.findByIdAndDelete({_id:id})
-     .then(doc=>{
-         res.json({response:'succes eliminado',data:doc})
-     })
-     .catch(err=>{
-         console.log(' error en la consulta', err.message)
-     })
- })
+ 
+
+ 
 ////////////////////////////////////
 app.listen(3001)
 console.log('server ON')
