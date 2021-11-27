@@ -6,6 +6,16 @@ var app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(express.static(__dirname+'/public/'))
+//--- cabeceras
+//// cabeceras
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT');
+    next();
+  });
+
+
 //--------conect 
 mongoose.connect('mongodb://127.0.0.1:27017/ella',{useNewUrlParser:true,useUnifiedTopology:true})
 const conexion= mongoose.connection
@@ -23,6 +33,7 @@ const UsuarioEsquem = new mongoose.Schema({
     edad:Number,
     usuario:String,
     pass:String,
+    cumple:Date,
     domicilio:{
         tipo:Number,
         calle:String,
@@ -264,7 +275,7 @@ app.get('/find/uno/:_idpaciente',(req,res)=>{
      var id = req.params._idpaciente
     Usuario.find({_id:id},{_id:0})
     .then(doc=>{
-        res.json({response:'succes',data:doc})
+        res.json({data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
@@ -355,7 +366,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
  })
  //----usuario meter nuevos usuarios
 app.post('/insert',(req,res)=>{
-    const user= new Usuario({nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais},contacto:[req.body.contacto],tipo:req.body.tipo})
+    const user= new Usuario({cumple:req.body.cumple,nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais},contacto:[req.body.contacto],tipo:req.body.tipo})
     user.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -426,7 +437,7 @@ app.get('/findEX/dos/:_iddoctor',(req,res)=>{
     Expediente.find({_iddoctor: req.params._iddoctor})
     .populate("_iddoctor").populate("_idpaciente")
     .then(doc=>{
-        res.json({response:'succes',data:doc})
+        res.json({data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
