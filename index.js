@@ -53,9 +53,7 @@ const AnticonceptivosEsquema = mongoose.Schema({
     metodo:String,
     fechainicio:Date,
     efectividad:Number,
-    efectos:[
-
-    ],
+    efectos:[],
     _idpaciente:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"usuario"
@@ -85,7 +83,8 @@ const AnalisisEsquema = mongoose.Schema({
             fechaToma:Date,
             nombrestudio:String,
             resultado:Number,
-            variacion:Number
+            variacion:Number,
+            variacion2:Number
         }
     ],
     _idpaciente:{
@@ -210,7 +209,7 @@ const AnalisisEsquema = mongoose.Schema({
     lugar:String,
     datos:[
       {
-        tamaño:Number,
+        tam:Number,
         fecha:Date
       }
    ],
@@ -262,9 +261,9 @@ Antecedentes.find()
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------usuario
 app.get('/find',(req,res)=>{
-    Usuario.find({},{_id:0})
+    Usuario.find({},{})
     .then(doc=>{
-        res.json({response:'succes',data:doc})
+        res.json({data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
@@ -448,7 +447,7 @@ app.get('/findEX/dos/:_iddoctor',(req,res)=>{
 //---- nuevo expediente
 //----Expediente
 app.post('/insertEX',(req,res)=>{
-    const exp = new Expediente({_idpaciente:req.body._idpaciente,alergias:[ { sintomas: [req.body.sintomas, "dolor", "muerte" ], causa:req.body.causa,complicacion:req.body.complicacion } ],tiposangre:req.body.tiposangre,Altura:req.body.Altura,peso:req.body.peso,Genero:req.body.Genero,_iddoctor:req.body._iddoctor})
+    const exp = new Expediente({_idpaciente:req.body._idpaciente,alergias:[ { sintomas: [req.body.alergias[0].sintomas ], causa:req.body.alergias[0].causa,complicacion:req.body.alergias[0].complicacion } ],tiposangre:req.body.tiposangre,Altura:req.body.Altura,peso:req.body.peso,Genero:req.body.Genero,_iddoctor:req.body._iddoctor})
     exp.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -474,6 +473,18 @@ app.get('/deleteEX/:id',(req,res)=>{
     const id= req.params.id
     let update = req.body
     Expediente.findByIdAndUpdate(id,update)
+     .then(doc=>{
+         res.json({response:'succes Actualizado',data:doc})
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+     })
+ })
+ app.put('/updateEX/alergia/:id',(req,res)=>{
+    const id= req.params.id
+    console.log(id)
+    console.log(req.body.sintomas)
+    Expediente.updateOne({_id:id},{$push:{alergias:{sintomas:req.body.sintomas,causa:req.body.causa,complicacion:req.body.complicacion}}})
      .then(doc=>{
          res.json({response:'succes Actualizado',data:doc})
      })
@@ -559,9 +570,9 @@ app.post('/insertCO',(req,res)=>{
 //------------------------------------------------------ Medicamentos
 //----medicamentos
 app.get('/findME/uno/:_idpaciente',(req,res)=>{
-    Medicamentos.find({_idpaciente:req.params._idpaciente},{_id:0})
+    Medicamentos.find({_idpaciente:req.params._idpaciente})
     .then(doc=>{
-        res.json({response:'succes',data:doc})
+        res.json({data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
@@ -569,7 +580,7 @@ app.get('/findME/uno/:_idpaciente',(req,res)=>{
 })
 //----Medicamentos nuevos
 app.post('/insertME',(req,res)=>{
-    const medi= new Medicamentos({_idpaciente:req.body._idpaciente,nombre:req.body.nombre,dosis:{cantidad:req.body.cantidad,frecuencia:req.body.frecuencia},fechainicio:req.body.fechainicio,fechafin:req.body.fechafin,efectos:[req.body.efectos],notas:[req.body.notas]})
+    const medi= new Medicamentos({_idpaciente:req.body._idpaciente,nombre:req.body.nombre,dosis:{cantidad:req.body.dosis.cantidad,frecuencia:req.body.dosis.frecuencia},fechainicio:req.body.fechainicio,fechafin:req.body.fechafin,efectos:[req.body.efectos],notas:[req.body.notas]})
     medi.save()
     .then(doc=>{
         //console.log("Info: "+req.body)
@@ -600,7 +611,7 @@ app.get('/deleteME/:id',(req,res)=>{
 app.get('/findSI/uno/:_idpaciente',(req,res)=>{
     Sintomas.find({_idpaciente:req.params._idpaciente},{_id:0})
     .then(doc=>{
-        res.json({response:'succes',data:doc})
+        res.json({data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
@@ -691,7 +702,7 @@ app.get('/findQ/uno/:_idpaciente',(req,res)=>{
 })
 //----Quiste nuevo
 app.post('/insertQ',(req,res)=>{
-    const quiste= new Quiste({lugar:req.body.lugar,datos:{tamaño:req.body.tamaño,fecha:req.body.fecha},cancer:req.body.cancer, removido:req.body.removido,_idpaciente:req.body._idpaciente})
+    const quiste= new Quiste({lugar:req.body.lugar,datos:{tam:req.body.tam,fecha:req.body.fecha},cancer:req.body.cancer, removido:req.body.removido,_idpaciente:req.body._idpaciente})
     quiste.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -724,7 +735,7 @@ app.post('/insertQ',(req,res)=>{
 app.get('/findAN/uno/:_idpaciente',(req,res)=>{
     Analisis.find({_idpaciente:req.params._idpaciente},{_id:0})
     .then(doc=>{
-        res.json({response:'succes',data:doc})
+        res.json({data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
@@ -732,11 +743,11 @@ app.get('/findAN/uno/:_idpaciente',(req,res)=>{
 })
 //----analisis nuevo
 app.post('/insertAN',(req,res)=>{
-    const analis= new Analisis({_idpaciente:req.body._idpaciente,_idlaboratorio:req.body._idlaboratorio,estudio:{fechaToma:req.body.fechaToma,nombrestudio:req.body.nombrestudio,resultado:req.body.resultado,variacion:req.body.variacion}})
+    const analis= new Analisis({_idpaciente:req.body._idpaciente,_idlaboratorio:req.body._idlaboratorio,estudio:{fechaToma:req.body.fechaToma,nombrestudio:req.body.nombrestudio,resultado:req.body.resultado,variacion:req.body.variacion,variacion2:req.body.variacion2}})
     analis.save()
     .then(doc=>{
         console.log('infor insertada',)
-        res.json({response:'succes',data:doc})
+        res.json({data:doc})
     })
     .catch(err=>{
         console.log(' error en la consulta', err.message)
