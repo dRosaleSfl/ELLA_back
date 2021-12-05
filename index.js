@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser')
 const express = require ('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 var app = express()
 
 app.use(bodyParser.json())
@@ -269,6 +270,37 @@ app.get('/find',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
+//---- usuario conseguir ID por medio de el usuario
+app.get('/findUserByID/:usuario', (req, res)=>{
+    Usuario.find({usuario:req.params.usuario},{_id:1})
+    .then(doc=>{
+        res.json({response:'success', data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//---- usuario conseguir ID por medio de el usuario
+app.get('/findIDByUser/:id', (req, res)=>{
+    Usuario.find({usuario:req.params.usuario},{_id:1})
+    .then(doc=>{
+        res.json({response:'success', data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//---- get usuarioID por medio de usuario y contraseña
+app.get('/findUserIDByAuth/:usuario&:pass', (req, res) =>{
+    console.log("ENTRA")
+    Usuario.find({usuario:req.params.usuario, pass:req.params.pass},{_id:1})
+    .then(doc=>{
+        res.json({response:'success', param1:req.params.usuario, param2:req.params.pass, data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
 //---- usuario perfil 
 app.get('/find/uno/:_idpaciente',(req,res)=>{
      var id = req.params._idpaciente
@@ -365,6 +397,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
  })
  //----usuario meter nuevos usuarios
 app.post('/insert',(req,res)=>{
+    console.log("Llamado en el back")
     const user= new Usuario({cumple:req.body.cumple,nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais},contacto:[req.body.contacto],tipo:req.body.tipo})
     user.save()
     .then(doc=>{
@@ -657,11 +690,12 @@ app.get('/findCM/uno/:_idpaciente',(req,res)=>{
     })
 })
 //---- Ciclo alta
-app.post('/insertCM',(req,res)=>{
+app.post('/insertCM',(req,res)=>{ 
+    console.log("insertCM")
     const regla= new Ciclo ({_idpaciente:req.body._idpaciente,cicloa:[{fechainicio:req.body.fechainicio,fechafin:req.body.fechafin}]})
     regla.save()
     .then(doc=>{
-        console.log('infor insertada',)
+        console.log('infor insertada ciclo')
         res.json({response:'succes',data:doc})
     })
     .catch(err=>{
@@ -669,7 +703,20 @@ app.post('/insertCM',(req,res)=>{
     })
 })
 //------ pasar el ciclo al historial
-//-------- meter un nuevo ciclo 
+//-------- meter un nuevo ciclo  db.ciclo.update({_id:ObjectId("61a74ba81f720f914d0cf7cf")},{$push:{cicloh:{fechainicio:'2021-12-09',fechafin:'2021-12-16',duracion:10,lapso:31}}})
+app.post('/insertnewCM', (req, res) => {
+    console.log("HOla")
+    console.log(req.body.id)
+    const id=req.body.id
+    Ciclo.updateOne({_idpaciente:id}, { $push:{ cicloh: { fechainicio:req.body.fechainicio, fechafin:req.body.fechafin, lapso:req.body.lapso, duracion:req.body.duracion } } } )
+    .then(doc=>{
+        console.log('infor insertada ciclo')
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
 //----- update variacion
 //---- update duracion 
 
