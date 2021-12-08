@@ -45,9 +45,11 @@ const UsuarioEsquem = new mongoose.Schema({
         estado:String,
         pais:String
     },
-    contacto:[
-
-    ],
+    contacto:{
+        celular:String,
+        telefonocasa: String,
+        correo: String
+    },  
     tipo:Number
 })
 const AnticonceptivosEsquema = mongoose.Schema({
@@ -144,11 +146,14 @@ const AnalisisEsquema = mongoose.Schema({
     cicloa:{
         fechainicio:Date,
         fechafin:Date,
-        duracioni:Number
+        duracioni:Number,
         },
     cicloh:[
         {
-            
+            fechainicio:String,
+            fechafin:String,
+            duracion:Number,
+            lapso:Number
         }
     ],
     variacion:Number,
@@ -398,7 +403,7 @@ app.get('/delete/:_idpaciente',(req,res)=>{
  //----usuario meter nuevos usuarios
 app.post('/insert',(req,res)=>{
     console.log("Llamado en el back")
-    const user= new Usuario({cumple:req.body.cumple,nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.estado,pais:req.body.pais},contacto:[req.body.contacto],tipo:req.body.tipo})
+    const user= new Usuario({cumple:req.body.cumple,nombre:req.body.nombre,apepat:req.body.apepat,apemat:req.body.apemat,edad:req.body.edad,usuario:req.body.usuario,pass:req.body.pass,tipo:req.body.tipo,domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.ciudad,pais:req.body.pais},contacto:{celular:req.body.celular,telefonocasa:req.body.casa,correo:req.body.correo},tipo:req.body.tipo})
     user.save()
     .then(doc=>{
         console.log('infor insertada',)
@@ -420,16 +425,28 @@ app.put('/update/:_idpaciente',(req,res)=>{
        console.log(' error en la consulta', err.message)
    })
 })
-//---- usuario actualizar (no documentos ni arrays)
-app.put('/update/domicilio/:_idpaciente',(req,res)=>{
-    var id = req.params._idpaciente
-   Usuario.find()
-   .then(doc=>{
-       res.json({response:'succes',data:doc})
-   })
-   .catch(err=>{
-       console.log(' error en la consulta', err.message)
-   })
+//---- usuario actualizar domicilio db.usuario.update({_id:ObjectId("61aff3d7389feb556ae153c1")},{$set:{domicilio:{calle:"Ma"}}})
+app.post('/updatedom',(req,res)=>{
+    console.log(req.body)
+    const id = req.body.id
+    Usuario.updateOne({_id:id},{$set:{domicilio:{calle:req.body.calle,numero:req.body.numero,colonia:req.body.colonia,cp:req.body.cp,municipio:req.body.municipio,estado:req.body.ciudad,pais:req.body.pais} } } )
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
+//---- usuario actualizar contacto
+app.post('/updatecon', (req,res)=>{
+    const id = req.body.id
+    Usuario.updateOne({_id:id},{$set:{contacto:{celular:req.body.celular,telefonocasa:req.body.casa,correo:req.body.correo}}})
+    .then(doc=>{
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
 })
 //------ Mete otro numero de telefeno
 //------- edita la direccion
@@ -681,7 +698,7 @@ app.get('/deleteSI/:id',(req,res)=>{
 //------------------------------------------------------ Ciclo 
 //----ciclomenstrual
 app.get('/findCM/uno/:_idpaciente',(req,res)=>{
-    Ciclo.find({_idpaciente:req.params._idpaciente},{_id:0})
+    Ciclo.find({_idpaciente:req.params._idpaciente})
     .then(doc=>{
         res.json({response:'succes',data:doc})
     })
@@ -691,7 +708,7 @@ app.get('/findCM/uno/:_idpaciente',(req,res)=>{
 })
 //---- Ciclo alta
 app.post('/insertCM',(req,res)=>{ 
-    console.log("insertCM")
+    console.log(": " + req.body.fechainicio + " : " + req.body.fechafin)
     const regla= new Ciclo ({_idpaciente:req.body._idpaciente,cicloa:[{fechainicio:req.body.fechainicio,fechafin:req.body.fechafin}]})
     regla.save()
     .then(doc=>{
@@ -718,7 +735,20 @@ app.post('/insertnewCM', (req, res) => {
     })
 })
 //----- update variacion
-//---- update duracion 
+//---- update duracion  db.ciclo.update({"cicloh._id" : ObjectId("61ade62180db21381bac730e")}, {$set: {"cicloh.$.duracion":18}})
+app.post('/updateCM/', (req, res)=>{
+    console.log(req.body)
+    const id = req.body.id
+    console.log(id)
+    Ciclo.updateOne( {"cicloh._id": id},{"$set" : {"cicloh.$.fechainicio" : req.body.fechainicio, "cicloh.$.fechafin" : req.body.fechafin, "cicloh.$.duracion" : req.body.duracion, "cicloh.$.lapso" : req.body.lapso}} )
+    .then(doc=>{
+        console.log('infor insertada ciclo')
+        res.json({response:'succes',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
 
  //----Ciclo eliminar 
  app.get('/deleteCM/:id',(req,res)=>{
@@ -730,6 +760,20 @@ app.post('/insertnewCM', (req, res) => {
      .catch(err=>{
          console.log(' error en la consulta', err.message)
      })
+ })
+
+
+ //-----Ciclo eliminar un solo ciclo de cicloh db.ciclo.update({_id : ObjectId("61af30d245474adb1ee481a9")},{$pull:{cicloh: {_id: ObjectId("61af60ce78906baa9513fbc3")}}})
+ app.post('/pullCM', (req, res)=>{
+     const idobj = req.body.idobj
+     const idarr = req.body.idarr
+     Ciclo.updateOne({_id:idobj}, {$pull: {cicloh:{_id:idarr}}})
+     .then(doc=>{
+        res.json({response:'succes eliminado',data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
  })
 
 
