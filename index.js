@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser')
 const express = require ('express')
 const mongoose = require('mongoose')
-const cors = require('cors')
+//const cors = require('cors')
 var app = express()
 
 app.use(bodyParser.json())
@@ -298,7 +298,7 @@ app.get('/findIDByUser/:id', (req, res)=>{
 //---- get usuarioID por medio de usuario y contraseña
 app.get('/findUserIDByAuth/:usuario&:pass', (req, res) =>{
     console.log("ENTRA")
-    Usuario.find({usuario:req.params.usuario, pass:req.params.pass},{_id:1})
+    Usuario.find({usuario:req.params.usuario, pass:req.params.pass})
     .then(doc=>{
         res.json({response:'success', param1:req.params.usuario, param2:req.params.pass, data:doc})
     })
@@ -628,6 +628,16 @@ app.get('/findME/uno/:_idpaciente',(req,res)=>{
         console.log(' error en la consulta', err.message)
     })
 })
+//buscar un medicanto
+app.get('/findME/dos/:_id',(req,res)=>{
+    Medicamentos.find({_id:req.params._id})
+    .then(doc=>{
+        res.json({data:doc})
+    })
+    .catch(err=>{
+        console.log(' error en la consulta', err.message)
+    })
+})
 //----Medicamentos nuevos
 app.post('/insertME',(req,res)=>{
     const medi= new Medicamentos({_idpaciente:req.body._idpaciente,nombre:req.body.nombre,dosis:{cantidad:req.body.dosis.cantidad,frecuencia:req.body.dosis.frecuencia},fechainicio:req.body.fechainicio,fechafin:req.body.fechafin,efectos:[req.body.efectos],notas:[req.body.notas]})
@@ -653,6 +663,22 @@ app.get('/deleteME/:id',(req,res)=>{
      })
  })
  //---- update dosis
+ app.put('/updateME/:id',(req,res)=>{
+    const id= req.params.id
+    let update = req.body
+    console.log(req.body)
+    console.log(id)
+    Medicamentos.findByIdAndUpdate(id,update)
+     .then(doc=>{
+         res.json({response:'succes Actualizado',data:doc})
+         console.log("yes")
+
+     })
+     .catch(err=>{
+         console.log(' error en la consulta', err.message)
+         console.log("no")
+     })
+ })
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
